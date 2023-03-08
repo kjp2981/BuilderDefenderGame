@@ -2,22 +2,31 @@ using Mono.Cecil;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class ResourceManager : MonoBehaviour
 {
     public static ResourceManager Instance { get; private set; }
 
     private Dictionary<ResourceTypeSO, int> resourceAmountDictionary;
+    [SerializeField]
+    private List<TextMeshProUGUI> texts;
+    private Dictionary<ResourceTypeSO, TextMeshProUGUI> resourceTextDictionary;
 
     void Awake()
     {
         Instance = this;
 
         resourceAmountDictionary = new Dictionary<ResourceTypeSO, int>();
+        resourceTextDictionary = new Dictionary<ResourceTypeSO, TextMeshProUGUI>();
         ResourceTypeListSO resourceTypeList = Resources.Load<ResourceTypeListSO>(typeof(ResourceTypeListSO).Name);
         foreach(ResourceTypeSO resourceType in resourceTypeList.list)
         {
             resourceAmountDictionary[resourceType] = 0;
+        }
+        for(int i = 0; i < resourceTypeList.list.Count; i++)
+        {
+            resourceTextDictionary[resourceTypeList.list[i]] = texts[i];
         }
 
         TestLogResourceAmountDictionary();
@@ -53,6 +62,14 @@ public class ResourceManager : MonoBehaviour
     public void AddResource(ResourceTypeSO resourceType, int amount)
     {
         resourceAmountDictionary[resourceType] += amount;
+        resourceTextDictionary[resourceType].SetText(resourceAmountDictionary[resourceType].ToString());
+#if UNITY_EDITOR
         TestLogResourceAmountDictionary();
+#endif
+    }
+
+    public int GetResourceAmount(ResourceTypeSO resourceType)
+    {
+        return resourceAmountDictionary[resourceType];
     }
 }

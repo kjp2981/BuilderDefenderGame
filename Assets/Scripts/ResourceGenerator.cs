@@ -9,6 +9,7 @@ public class ResourceGenerator : MonoBehaviour
 
     private BuildingTypeSO buildingType;
 
+
     private void Awake()
     {
         buildingType = GetComponent<BuildingTypeHolder>().buildingType;

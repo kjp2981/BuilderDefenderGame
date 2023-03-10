@@ -5,8 +5,13 @@ using UnityEngine.UI;
 
 public class BuildingTypeSelectUI : MonoBehaviour
 {
+    [SerializeField]
+    private Sprite sprite;
+
     private BuildingTypeListSO buildingTypeList;
     private Dictionary<BuildingTypeSO, Transform> btnTransformDic;
+
+    private Transform arrowBtn;
 
     private void Awake()
     {
@@ -17,15 +22,25 @@ public class BuildingTypeSelectUI : MonoBehaviour
         btnTemplate.gameObject.SetActive(false);
 
         int index = 0;
+        arrowBtn = Instantiate(btnTemplate, transform);
+        arrowBtn.gameObject.SetActive(true);
+
+        float offsetAmount = 160f;
+        arrowBtn.GetComponent<RectTransform>().anchoredPosition = new Vector2(offsetAmount * index, 0);
+
+        arrowBtn.Find("Image").GetComponent<Image>().sprite = sprite;
+        arrowBtn.Find("Image").GetComponent<RectTransform>().sizeDelta = new Vector2(0, -30);
+        arrowBtn.GetComponent<Button>().onClick.AddListener(() => BuildingManager.Instance.SetActiveBuildingType(null));
+        index++;
         foreach (BuildingTypeSO buildingType in buildingTypeList.list)
         {
             Transform btnTransform = Instantiate(btnTemplate, transform);
             btnTransform.gameObject.SetActive(true);
 
-            float offsetAmount = 160f;
             btnTransform.GetComponent<RectTransform>().anchoredPosition = new Vector2(offsetAmount * index, 0);
 
             btnTransform.Find("Image").GetComponent<Image>().sprite = buildingType.sprite;
+            
             btnTransform.GetComponent<Button>().onClick.AddListener(() => BuildingManager.Instance.SetActiveBuildingType(buildingType));
 
             btnTransformDic[buildingType] = btnTransform;
@@ -41,6 +56,8 @@ public class BuildingTypeSelectUI : MonoBehaviour
 
     private void UpdateActiveBuildingTypeBtn()
     {
+        arrowBtn.Find("Selected").gameObject.SetActive(false);
+
         foreach(BuildingTypeSO buildingType in btnTransformDic.Keys)
         {
             Transform btnTransform = btnTransformDic[buildingType];
@@ -48,7 +65,15 @@ public class BuildingTypeSelectUI : MonoBehaviour
         }
 
         BuildingTypeSO activeBuildingType = BuildingManager.Instance.GetActiveBuildingType();
-        Transform activeBtnTransform = btnTransformDic[activeBuildingType];
-        activeBtnTransform.Find("Selected").gameObject.SetActive(true);
+
+        if(activeBuildingType == null)
+        {
+            arrowBtn.Find("Selected").gameObject.SetActive(true);
+        }
+        else
+        {
+            Transform activeBtnTransform = btnTransformDic[activeBuildingType];
+            activeBtnTransform.Find("Selected").gameObject.SetActive(true);
+        }
     }
 }

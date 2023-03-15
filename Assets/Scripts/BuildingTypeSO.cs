@@ -6,7 +6,8 @@ using UnityEngine;
 public class BuildingTypeSO : ScriptableObject
 {
     public string nameString;
-    public Sprite sprite;
     public Transform prefab;
     public ResourceGeneratorData resourceGeneratorData;
+    public Sprite sprite;
+    public float minConstructionRadius;
 }

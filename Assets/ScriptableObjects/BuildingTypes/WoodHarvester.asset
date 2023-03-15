@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: WoodHarvester
   m_EditorClassIdentifier: 
   nameString: WoodHarvester
-  sprite: {fileID: 21300000, guid: 793ca27a5a3378149aaa12abe85933f4, type: 3}
   prefab: {fileID: 3220052758798215576, guid: 7b7c7b0948bf2fb48bb205f41f68553b, type: 3}
   resourceGeneratorData:
     timerMax: 0.5
     resourceType: {fileID: 11400000, guid: 809264c6c05b82a42824cedf9ec82e94, type: 2}
     resourceDelecttionRadius: 5
     maxResourceAmount: 7
+  sprite: {fileID: 21300000, guid: 793ca27a5a3378149aaa12abe85933f4, type: 3}
+  minConstructionRadius: 7

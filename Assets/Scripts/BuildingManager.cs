@@ -8,7 +8,12 @@ public class BuildingManager : MonoBehaviour
 {
     public static BuildingManager Instance { get; private set; }
 
-    public event EventHandler onActivelBuildingTypeChanged;
+    public event EventHandler<onActiveBuildingTypeEventArgs> onActivelBuildingTypeChanged;
+
+    public class onActiveBuildingTypeEventArgs : EventArgs
+    {
+        public BuildingTypeSO buildingType;
+    }
     
     private BuildingTypeListSO buildingTypeList;
     private BuildingTypeSO activeBuildingType;
@@ -41,7 +46,7 @@ public class BuildingManager : MonoBehaviour
     public void SetActiveBuildingType(BuildingTypeSO buildingType)
     {
         activeBuildingType = buildingType;
-        onActivelBuildingTypeChanged?.Invoke(this, EventArgs.Empty);
+        onActivelBuildingTypeChanged?.Invoke(this, new onActiveBuildingTypeEventArgs { buildingType = activeBuildingType });
     }
 
     public BuildingTypeSO GetActiveBuildingType()

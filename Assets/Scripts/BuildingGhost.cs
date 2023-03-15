@@ -17,16 +17,15 @@ public class BuildingGhost : MonoBehaviour
         BuildingManager.Instance.onActivelBuildingTypeChanged += BuildingManager_onActiveBuildingTypeChanged;
     }
 
-    private void BuildingManager_onActiveBuildingTypeChanged(object sender, System.EventArgs e)
+    private void BuildingManager_onActiveBuildingTypeChanged(object sender, BuildingManager.onActiveBuildingTypeEventArgs e)
     {
-        BuildingTypeSO activeBuildingType = BuildingManager.Instance.GetActiveBuildingType();
-        if(activeBuildingType == null)
+        if(e.buildingType == null)
         {
             Hide();
         }
         else
         {
-            Show(activeBuildingType.sprite);
+            Show(e.buildingType.sprite);
         }
     }
 

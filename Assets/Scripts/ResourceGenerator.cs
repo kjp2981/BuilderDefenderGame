@@ -7,13 +7,41 @@ public class ResourceGenerator : MonoBehaviour
     private float timer;
     private float timerMax;
 
-    private BuildingTypeSO buildingType;
-
+    private ResourceGeneratorData resourceGeneratorData;
 
     private void Awake()
     {
-        buildingType = GetComponent<BuildingTypeHolder>().buildingType;
-        timerMax = buildingType.resourceGeneratorData.timerMax;
+        resourceGeneratorData = GetComponent<BuildingTypeHolder>().buildingType.resourceGeneratorData;
+        timerMax = resourceGeneratorData.timerMax;
+    }
+
+    private void Start()
+    {
+        int nearbyResourceAmount = 0;
+        Collider2D[] collider2DArray = Physics2D.OverlapCircleAll(transform.position, resourceGeneratorData.resourceDelecttionRadius);
+        foreach(Collider2D collider2D in collider2DArray)
+        {
+            ResourceNode resourceNode = collider2D.GetComponent<ResourceNode>();
+            if(resourceNode != null)
+            {
+                if(resourceNode.resourceType == resourceGeneratorData.resourceType)
+                {
+                    nearbyResourceAmount++;
+                }
+            }
+        }
+        nearbyResourceAmount = Mathf.Clamp(nearbyResourceAmount, 0, resourceGeneratorData.maxResourceAmount);
+
+        if(nearbyResourceAmount == 0)
+        {
+            enabled = false;
+        }
+        else
+        {
+            timerMax = (resourceGeneratorData.timerMax / 2f) +
+                resourceGeneratorData.timerMax * (1 - (float)nearbyResourceAmount / resourceGeneratorData.maxResourceAmount);
+        }
+        Debug.Log("자원을 생산하는 타이머 값 : " + timerMax);
     }
 
     private void Update()
@@ -22,7 +50,7 @@ public class ResourceGenerator : MonoBehaviour
         if(timer <= 0)
         {
             timer = timerMax;
-            ResourceManager.Instance.AddResource(buildingType.resourceGeneratorData.resourceType, 1);
+            ResourceManager.Instance.AddResource(resourceGeneratorData.resourceType, 1);
         }
     }
 }

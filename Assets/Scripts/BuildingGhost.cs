@@ -5,6 +5,7 @@ using UnityEngine;
 public class BuildingGhost : MonoBehaviour
 {
     private GameObject spriteGameObject;
+    private ResourceNearbyOverlay resourceNearbyOverlay;
 
     private void Awake()
     {
@@ -13,6 +14,8 @@ public class BuildingGhost : MonoBehaviour
 
     private void Start()
     {
+        resourceNearbyOverlay = transform.Find("ResourceNearbyOverlay").GetComponent<ResourceNearbyOverlay>();
+
         Hide();
         BuildingManager.Instance.onActivelBuildingTypeChanged += BuildingManager_onActiveBuildingTypeChanged;
     }
@@ -21,10 +24,12 @@ public class BuildingGhost : MonoBehaviour
     {
         if(e.buildingType == null)
         {
+            resourceNearbyOverlay.Hide();
             Hide();
         }
         else
         {
+            resourceNearbyOverlay.Show(e.buildingType.resourceGeneratorData);
             Show(e.buildingType.sprite);
         }
     }

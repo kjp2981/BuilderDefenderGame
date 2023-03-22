@@ -40,6 +40,7 @@ public class ResourceGenerator : MonoBehaviour
         int nearbyResourceAmount = GetNearbyResourceAmount(resourceGeneratorData, transform.position);
         if (nearbyResourceAmount == 0)
         {
+            transform.Find("pfResourceGeneratorOverlay").gameObject.SetActive(false);
             enabled = false;
         }
         else
@@ -47,7 +48,6 @@ public class ResourceGenerator : MonoBehaviour
             timerMax = (resourceGeneratorData.timerMax / 2f) +
                 resourceGeneratorData.timerMax * (1 - (float)nearbyResourceAmount / resourceGeneratorData.maxResourceAmount);
         }
-        Debug.Log("자원을 생산하는 타이머 값 : " + timerMax);
     }
 
     private void Update()

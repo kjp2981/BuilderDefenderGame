@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,6 +34,18 @@ public class BuildingTypeSelectUI : MonoBehaviour
         arrowBtn.Find("Image").GetComponent<Image>().sprite = sprite;
         arrowBtn.Find("Image").GetComponent<RectTransform>().sizeDelta = new Vector2(0, -30);
         arrowBtn.GetComponent<Button>().onClick.AddListener(() => BuildingManager.Instance.SetActiveBuildingType(null));
+
+        MouseEnterExitEvents mouseEnterExitEvents = arrowBtn.GetComponent<MouseEnterExitEvents>();
+        mouseEnterExitEvents.OnMouseEnter += (object sender, EventArgs e) =>
+        {
+            TooltipUI.Instance.Show("Arrow Button");
+        };
+
+        mouseEnterExitEvents.OnMouseExit += (object sender, EventArgs e) =>
+        {
+            TooltipUI.Instance.Hide();
+        };
+
         index++;
         foreach (BuildingTypeSO buildingType in buildingTypeList.list)
         {
@@ -45,6 +58,17 @@ public class BuildingTypeSelectUI : MonoBehaviour
             btnTransform.Find("Image").GetComponent<Image>().sprite = buildingType.sprite;
             
             btnTransform.GetComponent<Button>().onClick.AddListener(() => BuildingManager.Instance.SetActiveBuildingType(buildingType));
+
+            mouseEnterExitEvents = btnTransform.GetComponent<MouseEnterExitEvents>();
+            mouseEnterExitEvents.OnMouseEnter += (object sender, EventArgs e) =>
+            {
+                TooltipUI.Instance.Show(buildingType.nameString + "\n" +  buildingType.GetConstructionCost());
+            };
+
+            mouseEnterExitEvents.OnMouseExit += (object sender, EventArgs e) =>
+            {
+                TooltipUI.Instance.Hide();
+            };
 
             btnTransformDic[buildingType] = btnTransform;
 

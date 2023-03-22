@@ -47,7 +47,7 @@ public class BuildingManager : MonoBehaviour
                     }
                     else
                     {
-
+                        TooltipUI.Instance.Show("자원 부족 : " + activeBuildingType.GetConstructionCost());
                     }
                 }
                 else

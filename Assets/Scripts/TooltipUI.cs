@@ -24,11 +24,11 @@ public class TooltipUI : MonoBehaviour
         Hide();
     }
 
-    private void Update()
+    private void HandleFollowMouse()
     {
         Vector2 anchoredPosition = Input.mousePosition / canvasRectTramsform.localScale.x;
 
-        if(anchoredPosition.x + backgroundRectTransform.rect.width > canvasRectTramsform.rect.width)
+        if (anchoredPosition.x + backgroundRectTransform.rect.width > canvasRectTramsform.rect.width)
         {
             anchoredPosition.x = canvasRectTramsform.rect.width - backgroundRectTransform.rect.width;
         }
@@ -38,7 +38,7 @@ public class TooltipUI : MonoBehaviour
             anchoredPosition.y = canvasRectTramsform.rect.height - backgroundRectTransform.rect.height;
         }
 
-        if(anchoredPosition.x < 0)
+        if (anchoredPosition.x < 0)
         {
             anchoredPosition.x = 0;
         }
@@ -65,10 +65,18 @@ public class TooltipUI : MonoBehaviour
     {
         gameObject.SetActive(true);
         SetText(tooltipText);
+        HandleFollowMouse();
+        StartCoroutine(HideCoroutine());
     }
 
     public void Hide()
     {
         gameObject.SetActive(false);
+    }
+
+    private IEnumerator HideCoroutine()
+    {
+        yield return new WaitForSeconds(2f);
+        Hide();
     }
 }

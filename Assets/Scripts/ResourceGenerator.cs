@@ -41,6 +41,7 @@ public class ResourceGenerator : MonoBehaviour
         if (nearbyResourceAmount == 0)
         {
             transform.Find("pfResourceGeneratorOverlay").gameObject.SetActive(false);
+            transform.GetComponentInChildren<Animator>().enabled = false;
             enabled = false;
         }
         else

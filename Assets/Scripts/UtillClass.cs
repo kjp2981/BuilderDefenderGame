@@ -16,4 +16,9 @@ public static class UtillClass
         mouserWorldPosition.z = 0;
         return mouserWorldPosition;
     }
+
+    public static Vector3 GetRandomDir()
+    {
+        return new Vector3(Random.Range(-1, 1f), Random.Range(-1, 1), 1).normalized;
+    }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -15,6 +16,8 @@ public class Enemy : MonoBehaviour
 
     private Transform targetTransform;
     private Rigidbody2D enemyRigidbody2D;
+    private float lookForTimer;
+    private float lookForTimerMax = 0.2f;
 
     private void Awake()
     {
@@ -24,13 +27,37 @@ public class Enemy : MonoBehaviour
     private void Start()
     {
         targetTransform = BuildingManager.Instance.GetHQBuilding().transform;
+        lookForTimer = Random.Range(0f, lookForTimerMax);
     }
 
     private void Update()
     {
-        Vector3 moveDir = (targetTransform.position - transform.position).normalized;
-        float moveSpeed = 8;
-        enemyRigidbody2D.velocity = moveDir * moveSpeed;
+        HandleMovement();
+        HandleTargeting();
+    }
+
+    private void HandleMovement()
+    {
+        if (targetTransform != null)
+        {
+            Vector3 moveDir = (targetTransform.position - transform.position).normalized;
+            float moveSpeed = 8;
+            enemyRigidbody2D.velocity = moveDir * moveSpeed;
+        }
+        else
+        {
+            enemyRigidbody2D.velocity = Vector2.zero;
+        }
+    }
+
+    private void HandleTargeting()
+    {
+        lookForTimer -= Time.deltaTime;
+        if (lookForTimer < 0)
+        {
+            lookForTimer += lookForTimerMax;
+            LookForTarget();
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -42,6 +69,36 @@ public class Enemy : MonoBehaviour
             HealthSystem healthSystem = building.GetComponent<HealthSystem>();
             healthSystem.Damage(10);
             Destroy(gameObject);
+        }
+    }
+
+    public void LookForTarget()
+    {
+        float targetMaxRadius = 20f;
+        Collider2D[] collider2DArray = Physics2D.OverlapCircleAll(transform.position, targetMaxRadius);
+
+        foreach(Collider2D collider2D in collider2DArray)
+        {
+            Building building = collider2D.GetComponent<Building>();
+            if(building != null)
+            {
+                if(targetTransform == null)
+                {
+                    targetTransform = building.transform;
+                }
+                else
+                {
+                    if(Vector3.Distance(transform.position, targetTransform.position) > Vector3.Distance(transform.position, building.transform.position))
+                    {
+                        targetTransform = building.transform;
+                    }
+                }
+            }
+        }
+
+        if(targetTransform != null)
+        {
+            targetTransform = BuildingManager.Instance.GetHQBuilding().transform;
         }
     }
 }

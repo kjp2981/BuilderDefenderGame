@@ -15,6 +15,8 @@ public class BuildingManager : MonoBehaviour
         public BuildingTypeSO buildingType;
     }
 
+    [SerializeField]
+    private Building hqBuilding;
     private BuildingTypeListSO buildingTypeList;
     private BuildingTypeSO activeBuildingType;
 
@@ -110,5 +112,10 @@ public class BuildingManager : MonoBehaviour
 
         errorMessage = "주변에 건물이 있어야 합니다.";
         return false;
+    }
+
+    public Building GetHQBuilding()
+    {
+        return hqBuilding;
     }
 }

@@ -5,18 +5,28 @@ using UnityEngine;
 public class Building : MonoBehaviour
 {
     private HealthSystem healthSystem;
+    private BuildingTypeSO buildingType;
 
     private void Start()
     {
         healthSystem = GetComponent<HealthSystem>();
+        buildingType = GetComponent<BuildingTypeHolder>().buildingType;
 
-        Debug.Log(healthSystem.GetHealthAmount());
-        healthSystem.Damage(10);
-        Debug.Log(healthSystem.GetHealthAmount());
-        healthSystem.Damage(50);
-        Debug.Log(healthSystem.GetHealthAmount());
-        healthSystem.Damage(40);
-        Debug.Log(healthSystem.GetHealthAmount());
-        Debug.Log(healthSystem.IsDead());
+        healthSystem.SetHealthAmountMax(buildingType.healthAmountMax, true);
+        healthSystem.OnDied += HealthSystem_OnDied;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            healthSystem.Damage(10);
+            Debug.Log(healthSystem.GetHealthAmount());
+        }
+    }
+
+    private void HealthSystem_OnDied(object sender, System.EventArgs e)
+    {
+        Destroy(gameObject);
     }
 }

@@ -21,4 +21,11 @@ public static class UtillClass
     {
         return new Vector3(Random.Range(-1, 1f), Random.Range(-1, 1), 1).normalized;
     }
+
+    public static float GetAngleFromVector(Vector3 vector)
+    {
+        float radians = Mathf.Atan2(vector.y, vector.x);
+        float degrees = radians * Mathf.Rad2Deg;
+        return degrees;
+    }
 }

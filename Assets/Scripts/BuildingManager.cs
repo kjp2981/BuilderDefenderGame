@@ -12,7 +12,7 @@ public class BuildingManager : MonoBehaviour
 
     public class onActiveBuildingTypeEventArgs : EventArgs
     {
-        public BuildingTypeSO buildingType;
+        public BuildingTypeSO activeBuildingType;
     }
 
     [SerializeField]
@@ -58,19 +58,12 @@ public class BuildingManager : MonoBehaviour
                 }
             }
         }
-
-
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Vector3 enemySpawnPosition = UtillClass.GetMouseWorldPosition() + UtillClass.GetRandomDir() * 5f;
-            Enemy.Create(enemySpawnPosition);
-        }
     }
 
     public void SetActiveBuildingType(BuildingTypeSO buildingType)
     {
         activeBuildingType = buildingType;
-        onActivelBuildingTypeChanged?.Invoke(this, new onActiveBuildingTypeEventArgs { buildingType = activeBuildingType });
+        onActivelBuildingTypeChanged?.Invoke(this, new onActiveBuildingTypeEventArgs { activeBuildingType = activeBuildingType });
     }
 
     public BuildingTypeSO GetActiveBuildingType()

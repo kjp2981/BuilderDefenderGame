@@ -30,9 +30,6 @@ public class ResourceManager : MonoBehaviour
         {
             AddResource(resourceAmount.resourceType, resourceAmount.amount);
         }
-        {
-
-        }
     }
 
     private void Update()

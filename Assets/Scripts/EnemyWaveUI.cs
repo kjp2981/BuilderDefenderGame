@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.Rendering;
 using UnityEngine;
 
 public class EnemyWaveUI : MonoBehaviour
@@ -8,47 +10,61 @@ public class EnemyWaveUI : MonoBehaviour
     [SerializeField]
     private EnemyWaveManager enemyWaveManager;
 
-    private TextMeshProUGUI waveNumberText;
-    private TextMeshProUGUI waveMessageText;
-
     private RectTransform enemyWaveSpawnPositionIndicator;
     private RectTransform enemyClosestPositionIndicator;
 
-    private Camera maincamera;
+    private TMP_Text waveNumberText;
+    private TMP_Text waveMessageText;
+
+    private Camera mainCam;
+
     private Enemy targetEnemy;
 
     private void Awake()
     {
-        waveNumberText = transform.Find("waveNumberText").GetComponent<TextMeshProUGUI>();
-        waveMessageText = transform.Find("waveMessageText").GetComponent<TextMeshProUGUI>();
+        mainCam = Camera.main;
+        waveNumberText = transform.Find("waveNumberText").GetComponent<TMP_Text>();
+        waveMessageText = transform.Find("waveMessageText").GetComponent<TMP_Text>();
         enemyWaveSpawnPositionIndicator = transform.Find("enemyWaveSpawnPositionIndicator").GetComponent<RectTransform>();
         enemyClosestPositionIndicator = transform.Find("enemyClosestPositionIndicator").GetComponent<RectTransform>();
     }
 
     private void Start()
     {
-        maincamera = Camera.main;
-
         enemyWaveManager.OnWaveNumberChanged += EnemyWaveManager_OnWaveNumberChanged;
-        SetWaveNumberText("Wave " + enemyWaveManager.GetWaveNumber());
     }
 
-    private void EnemyWaveManager_OnWaveNumberChanged(object sender, System.EventArgs e)
+    private void EnemyWaveManager_OnWaveNumberChanged(object sender, EventArgs e)
     {
-        SetWaveNumberText("Wave " + enemyWaveManager.GetWaveNumber());
+        SetWaveNumberText("Wave" + enemyWaveManager.WaveNumber);
     }
 
     private void Update()
     {
         HandleNextWaveMessage();
-        HandleEnemtWaveSpawnPositionIndicator();
+        HandleEnemyWaveSpawnPositionIndicator();
         HandleEnemyClosestPositionIndicator();
+
+    }
+
+    private void HandleNextWaveMessage()
+    {
+
+        float nextTimer = enemyWaveManager.NextWaveSpawnTimer;
+        if (nextTimer <= 0f)
+        {
+            SetWaveMessageText("");
+        }
+        else
+        {
+            SetWaveMessageText("Next Wave in " + nextTimer.ToString("F1") + "s");
+        }
     }
 
     private void HandleEnemyClosestPositionIndicator()
     {
-        float targetMaxRadius = 9999f;
-        Collider2D[] collider2DArray = Physics2D.OverlapCircleAll(maincamera.transform.position, targetMaxRadius);
+        float targetMaxRadius = 20f;
+        Collider2D[] collider2DArray = Physics2D.OverlapCircleAll(transform.position, targetMaxRadius);
 
         foreach (Collider2D collider2D in collider2DArray)
         {
@@ -61,7 +77,7 @@ public class EnemyWaveUI : MonoBehaviour
                 }
                 else
                 {
-                    if (Vector3.Distance(transform.position, enemy.transform.position) < Vector3.Distance(transform.position, targetEnemy.transform.position))
+                    if (Vector3.Distance(transform.position, enemy.transform.position) > Vector3.Distance(transform.position, enemy.transform.position))
                     {
                         targetEnemy = enemy;
                     }
@@ -71,51 +87,39 @@ public class EnemyWaveUI : MonoBehaviour
 
         if (targetEnemy != null)
         {
-            Vector3 dirToClosestEnemy = (enemyWaveManager.GetSpawnPosition() - maincamera.transform.position).normalized;
+            Vector3 dirToClosetEnemy = (enemyWaveManager.GetSpawnPosition() - mainCam.transform.position).normalized;
 
-            enemyClosestPositionIndicator.anchoredPosition = dirToClosestEnemy * 300f;
-            enemyClosestPositionIndicator.eulerAngles = new Vector3(0, 0, UtillClass.GetAngleFromVector(dirToClosestEnemy));
+            enemyClosestPositionIndicator.anchoredPosition = dirToClosetEnemy * 300f;
+            enemyClosestPositionIndicator.eulerAngles = new Vector3(0, 0, UtilClass.GetAngleFromVector(dirToClosetEnemy));
 
-            float distanceToClosestEnemy = Vector3.Distance(enemyWaveManager.GetSpawnPosition(), maincamera.transform.position);
-            enemyClosestPositionIndicator.gameObject.SetActive(distanceToClosestEnemy > maincamera.orthographicSize * 1.5f);
+            float distToClosetEnemy = Vector3.Distance(enemyWaveManager.GetSpawnPosition(), mainCam.transform.position);
+            enemyClosestPositionIndicator.gameObject.SetActive(distToClosetEnemy > mainCam.orthographicSize * 1.5f);
         }
+
         else
         {
             enemyClosestPositionIndicator.gameObject.SetActive(false);
         }
     }
 
-    private void HandleEnemtWaveSpawnPositionIndicator()
+    private void HandleEnemyWaveSpawnPositionIndicator()
     {
-        Vector3 dirToNextSpawnPosition = (enemyWaveManager.GetSpawnPosition() - maincamera.transform.position).normalized;
+        Vector3 dirToNextSpawnPos = (enemyWaveManager.GetSpawnPosition() - mainCam.transform.position).normalized;
 
-        enemyWaveSpawnPositionIndicator.anchoredPosition = dirToNextSpawnPosition * 300f;
-        enemyWaveSpawnPositionIndicator.eulerAngles = new Vector3(0, 0, UtillClass.GetAngleFromVector(dirToNextSpawnPosition));
+        enemyWaveSpawnPositionIndicator.anchoredPosition = dirToNextSpawnPos * 300f;
+        enemyWaveSpawnPositionIndicator.eulerAngles = new Vector3(0, 0, UtilClass.GetAngleFromVector(dirToNextSpawnPos));
 
-        float distanceToNextSpawnPosition = Vector3.Distance(enemyWaveManager.GetSpawnPosition(), maincamera.transform.position);
-        enemyWaveSpawnPositionIndicator.gameObject.SetActive(distanceToNextSpawnPosition > maincamera.orthographicSize * 1.5f);
-    }
-
-    private void HandleNextWaveMessage()
-    {
-        float nextWaveSpawnTimer = enemyWaveManager.GetNextWaveSpawnTImer();
-        if (nextWaveSpawnTimer <= 0f)
-        {
-            SetMessageText("");
-        }
-        else
-        {
-            SetMessageText("Next Wave in " + nextWaveSpawnTimer.ToString("F1") + "s");
-        }
+        float distToNextSpawnPos = Vector3.Distance(enemyWaveManager.GetSpawnPosition(), mainCam.transform.position);
+        enemyWaveSpawnPositionIndicator.gameObject.SetActive(distToNextSpawnPos > mainCam.orthographicSize * 1.5f);
     }
 
     private void SetWaveNumberText(string text)
     {
-        waveNumberText.SetText(text);
+        waveNumberText.text = text;
     }
 
-    private void SetMessageText(string message)
+    private void SetWaveMessageText(string text)
     {
-        waveMessageText.SetText(message);
+        waveMessageText.text = text;
     }
 }

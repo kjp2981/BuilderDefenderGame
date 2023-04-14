@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BuildingGhost : MonoBehaviour
@@ -15,25 +16,27 @@ public class BuildingGhost : MonoBehaviour
     private void Start()
     {
         resourceNearbyOverlay = transform.Find("ResourceNearbyOverlay").GetComponent<ResourceNearbyOverlay>();
-
         Hide();
-        BuildingManager.Instance.onActivelBuildingTypeChanged += BuildingManager_onActiveBuildingTypeChanged;
+        BuildingManager.Instance.onActiveBuildingTypeChanged += BuildingManager_onActiveBuildingTypeChanged;
     }
 
     private void BuildingManager_onActiveBuildingTypeChanged(object sender, BuildingManager.onActiveBuildingTypeEventArgs e)
     {
-        if(e.activeBuildingType == null)
+
+        if (e.buildingType == null)
         {
-            Hide();
             resourceNearbyOverlay.Hide();
+            Hide();
         }
         else
         {
-            Show(e.activeBuildingType.sprite);
-            if (e.activeBuildingType.hasResourceGeneratorData)
+            Show(e.buildingType.sprite);
+
+            if (e.buildingType.hasResourceGeneratorData)
             {
-                resourceNearbyOverlay.Show(e.activeBuildingType.resourceGeneratorData);
+                resourceNearbyOverlay.Show(e.buildingType.resourceGeneratorData);
             }
+
             else
             {
                 resourceNearbyOverlay.Hide();
@@ -43,7 +46,7 @@ public class BuildingGhost : MonoBehaviour
 
     private void Update()
     {
-        transform.position = UtillClass.GetMouseWorldPosition();
+        transform.position = UtilClass.GetMouseWorldPosition();
     }
 
     private void Hide()
@@ -56,4 +59,5 @@ public class BuildingGhost : MonoBehaviour
         spriteGameObject.SetActive(true);
         spriteGameObject.GetComponent<SpriteRenderer>().sprite = ghostSprite;
     }
+
 }

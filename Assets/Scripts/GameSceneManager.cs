@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameSceneManager
+public class GameSceneManager : MonoBehaviour
 {
     public enum Scene
     {
@@ -11,7 +11,7 @@ public class GameSceneManager
         MainMenuScene,
     }
 
-    public static void Load(Scene scene)
+    public  static void Load(Scene scene)
     {
         SceneManager.LoadScene(scene.ToString());
     }

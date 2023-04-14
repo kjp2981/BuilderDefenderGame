@@ -12,11 +12,12 @@ public class BuildingDemolishBtn : MonoBehaviour
     {
         transform.Find("button").GetComponent<Button>().onClick.AddListener(() =>
         {
-            BuildingTypeSO buildingType = building.GetComponent<BuildingTypeHolder>().buildingType;
-            foreach(ResourceAmount resourceAmount in buildingType.constructionCostArray)
+            BuildingTypeSO type = building.GetComponent<BuildingTypeHolder>().buildingType;
+            foreach(ResourceAmount resourceAmount in type.constructionCostArray)
             {
-                ResourceManager.Instance.AddResource(resourceAmount.resourceType, Mathf.FloorToInt(resourceAmount.amount * 0.6f));
+                ResourceManager.Instance.AddResource(resourceAmount.resourceType, Mathf.FloorToInt(resourceAmount.amount*0.6f));
             }
+
             Destroy(building.gameObject);
         });
     }

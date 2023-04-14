@@ -4,20 +4,19 @@ using UnityEngine;
 
 public class SortingOrder : MonoBehaviour
 {
-    [SerializeField]
-    private bool runOnce;
+    [SerializeField] private bool runOnce;
+    private SpriteRenderer spriteRenderer;
 
-    private SpriteRenderer _spriteRenderer;
 
     private void Awake()
     {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
-
-    private void LateUpdate()
+    
+    void LateUpdate()
     {
         float precisionMulplier = 5f;
-        _spriteRenderer.sortingOrder = (int)(-(transform.position.y - transform.localPosition.y) * precisionMulplier);
+        spriteRenderer.sortingOrder = (int)(-(transform.position.y-transform.localPosition.y)* precisionMulplier);
 
         if (runOnce)
         {

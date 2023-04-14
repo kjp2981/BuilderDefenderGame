@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class Tower : MonoBehaviour
 {
+    [SerializeField]
+    private float shootTimerMax = 0.3f;
+    private float shootTimer;
+
+    private float lookForTimer;
+    private float lookForTimerMax = 0.2f;
+
     private Enemy targetEnemy;
-    private float lookForTargetTimer;
-    private float lookForTargetTimerMax = 0.2f;
 
     private Vector3 projectileSpawnPosition;
-
-    [SerializeField]
-    private float shootTimerMax;
-    private float shootTimer;
 
     private void Awake()
     {
@@ -21,11 +22,21 @@ public class Tower : MonoBehaviour
 
     private void Update()
     {
-        HandleTargeting();
+        HandleTargetting();
         HandleShooting();
     }
 
-    private void LookForTargets()
+    private void HandleTargetting()
+    {
+        lookForTimer -= Time.deltaTime;
+        if (lookForTimer < 0f)
+        {
+            lookForTimer += lookForTimerMax;
+            LookForTarget();
+        }
+    }
+
+    private void LookForTarget()
     {
         float targetMaxRadius = 20f;
         Collider2D[] collider2DArray = Physics2D.OverlapCircleAll(transform.position, targetMaxRadius);
@@ -33,37 +44,27 @@ public class Tower : MonoBehaviour
         foreach (Collider2D collider2D in collider2DArray)
         {
             Enemy enemy = collider2D.GetComponent<Enemy>();
-            if(enemy != null)
+            if (enemy != null)
             {
-                if(targetEnemy == null)
+                if (targetEnemy == null)
                 {
                     targetEnemy = enemy;
                 }
                 else
                 {
-                    if(Vector3.Distance(transform.position, enemy.transform.position) < Vector3.Distance(transform.position, targetEnemy.transform.position))
+                    if (Vector3.Distance(transform.position, enemy.transform.position) > Vector3.Distance(transform.position, enemy.transform.position))
                     {
                         targetEnemy = enemy;
                     }
-                }
+                } 
             }
-        }
-    }
-
-    private void HandleTargeting()
-    {
-        lookForTargetTimer -= Time.deltaTime;
-        if (lookForTargetTimer < 0f)
-        {
-            lookForTargetTimer += lookForTargetTimerMax;
-            LookForTargets();
         }
     }
 
     private void HandleShooting()
     {
         shootTimer -= Time.deltaTime;
-        if (shootTimer <= 0f)
+        if(shootTimer <= 0f)
         {
             shootTimer += shootTimerMax;
 

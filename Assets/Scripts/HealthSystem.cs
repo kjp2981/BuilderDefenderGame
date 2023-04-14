@@ -1,16 +1,17 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class HealthSystem : MonoBehaviour
 {
     public event EventHandler OnDamaged;
     public event EventHandler OnDied;
-    public event EventHandler OnHealed;
 
-    [SerializeField]
-    private int healthAmountMax;
+    public event EventHandler OnHealed;
+    public event EventHandler OnHealthAmountMaxChanged;
+
+    [SerializeField] private int healthAmountMax;
     private int healthAmount;
 
     private void Awake()
@@ -41,6 +42,11 @@ public class HealthSystem : MonoBehaviour
         return healthAmount;
     }
 
+   public int GetHealthAmountMax()
+    {
+        return healthAmountMax;
+    }
+
     public float GetHealthAmountNormalized()
     {
         return (float)healthAmount / healthAmountMax;
@@ -54,28 +60,26 @@ public class HealthSystem : MonoBehaviour
     public void SetHealthAmountMax(int healthAmountMax, bool updateHealthAmount)
     {
         this.healthAmountMax = healthAmountMax;
-
         if (updateHealthAmount)
         {
             healthAmount = healthAmountMax;
         }
+
+        OnHealthAmountMaxChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    public void Heal(int healAmount)
+    public void Heal(int amount )
     {
-        healthAmount += healAmount;
+        healthAmount += amount;
         healthAmount = Mathf.Clamp(healthAmount, 0, healthAmountMax);
-        OnHealed?.Invoke(this, EventArgs.Empty);
+        OnHealed?.Invoke(this,EventArgs.Empty);
     }
 
     public void HealFull()
     {
         healthAmount = healthAmountMax;
-        OnHealed?.Invoke(this, EventArgs.Empty);
+
+        OnHealed?.Invoke(this,EventArgs.Empty);
     }
 
-    public int GetHealthAmountMax()
-    {
-        return healthAmountMax;
-    }
 }

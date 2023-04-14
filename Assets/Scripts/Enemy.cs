@@ -1,60 +1,67 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
     public static Enemy Create(Vector3 position)
     {
-        Transform pfEnemy = Resources.Load<Transform>("pfEnemy");
-        Transform enemyTramsform = Instantiate(pfEnemy, position, Quaternion.identity);
-        Enemy enemy = enemyTramsform.GetComponent<Enemy>();
-
+        Transform pfEnemy = GameAssets.Instance.pfEnemy;
+        Transform enemyTransform = Instantiate(pfEnemy, position, Quaternion.identity);
+        Enemy enemy = enemyTransform.GetComponent<Enemy>();
         return enemy;
     }
 
     private Transform targetTransform;
     private Rigidbody2D enemyRigidbody2D;
     private float lookForTimer;
-    private float lookForTimerMax = 0.2f;
+    private float lookForTimerMax = .2f;
 
     private HealthSystem healthSystem;
 
-    private void Awake()
-    {
-        enemyRigidbody2D = GetComponent<Rigidbody2D>();
-    }
 
-    private void Start()
+    private void Awake()
     {
         enemyRigidbody2D = GetComponent<Rigidbody2D>();
         healthSystem = GetComponent<HealthSystem>();
         healthSystem.OnDied += HealthSystem_OnDied;
         healthSystem.OnDamaged += HealthSystem_OnDamaged;
-
-        if(BuildingManager.Instance.GetHQBuilding() != null)
-        {
-            targetTransform = BuildingManager.Instance.GetHQBuilding().transform;
-        }
-        lookForTimer = Random.Range(0f, lookForTimerMax);
     }
 
     private void HealthSystem_OnDamaged(object sender, System.EventArgs e)
     {
         SoundManager.Instance.PlaySound(SoundManager.Sound.EnemyHit);
+        Debug.Log(CinemachineShake.Instance);
+        CinemachineShake.Instance.ShakeCamera(5f, .1f);
+        ChromaticAberrationEffect.Instance.SetWeight(.5f);
+
+    }
+
+    private void Start()
+    {
+        if (BuildingManager.Instance.GetHQBuilding() != null)
+        {
+            targetTransform = BuildingManager.Instance.GetHQBuilding().transform;
+        }
+
+        lookForTimer = Random.Range(0f, lookForTimerMax);
+
     }
 
     private void HealthSystem_OnDied(object sender, System.EventArgs e)
     {
         SoundManager.Instance.PlaySound(SoundManager.Sound.EnemyDie);
+        CinemachineShake.Instance.ShakeCamera(7f, .15f);
+        ChromaticAberrationEffect.Instance.SetWeight(.5f);
+
+        Instantiate(GameAssets.Instance.pfEnemyDieParticles, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 
     private void Update()
     {
         HandleMovement();
-        HandleTargeting();
+        HandleTargetting();
     }
 
     private void HandleMovement()
@@ -62,7 +69,7 @@ public class Enemy : MonoBehaviour
         if (targetTransform != null)
         {
             Vector3 moveDir = (targetTransform.position - transform.position).normalized;
-            float moveSpeed = 8;
+            float moveSpeed = 8f;
             enemyRigidbody2D.velocity = moveDir * moveSpeed;
         }
         else
@@ -70,11 +77,10 @@ public class Enemy : MonoBehaviour
             enemyRigidbody2D.velocity = Vector2.zero;
         }
     }
-
-    private void HandleTargeting()
+    private void HandleTargetting()
     {
         lookForTimer -= Time.deltaTime;
-        if (lookForTimer < 0)
+        if (lookForTimer < 0f)
         {
             lookForTimer += lookForTimerMax;
             LookForTarget();
@@ -84,32 +90,31 @@ public class Enemy : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         Building building = collision.gameObject.GetComponent<Building>();
-
-        if(building != null)
+        if (building != null)
         {
             HealthSystem healthSystem = building.GetComponent<HealthSystem>();
             healthSystem.Damage(10);
-            Destroy(gameObject);
+            this.healthSystem.Damage(999);
         }
     }
 
-    public void LookForTarget()
+    private void LookForTarget()
     {
-        float targetMaxRadius = 20f;
+        float targetMaxRadius = 30f;
         Collider2D[] collider2DArray = Physics2D.OverlapCircleAll(transform.position, targetMaxRadius);
 
-        foreach(Collider2D collider2D in collider2DArray)
+        foreach (Collider2D collider2D in collider2DArray)
         {
             Building building = collider2D.GetComponent<Building>();
-            if(building != null)
+            if (building != null)
             {
-                if(targetTransform == null)
+                if (targetTransform == null)
                 {
                     targetTransform = building.transform;
                 }
                 else
                 {
-                    if(Vector3.Distance(transform.position, targetTransform.position) > Vector3.Distance(transform.position, building.transform.position))
+                    if (Vector3.Distance(transform.position, targetTransform.position) > Vector3.Distance(transform.position, building.transform.position))
                     {
                         targetTransform = building.transform;
                     }
@@ -117,8 +122,7 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        //if(targetTransform != null)
-        if(BuildingManager.Instance.GetHQBuilding() != null)
+        if (BuildingManager.Instance.GetHQBuilding() != null)
         {
             targetTransform = BuildingManager.Instance.GetHQBuilding().transform;
         }

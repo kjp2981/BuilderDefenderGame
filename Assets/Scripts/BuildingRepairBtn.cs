@@ -7,10 +7,11 @@ public class BuildingRepairBtn : MonoBehaviour
 {
     [SerializeField]
     private HealthSystem healthSystem;
-    [SerializeField]
-    private ResourceTypeSO goldResourceType;
 
-    private void Awake()
+    [SerializeField]
+    private ResourceTypeSO goldResouceType;
+
+    public void Awake()
     {
         transform.Find("button").GetComponent<Button>().onClick.AddListener(() =>
         {
@@ -19,19 +20,20 @@ public class BuildingRepairBtn : MonoBehaviour
 
             ResourceAmount[] resourceAmountCost = new ResourceAmount[]
             {
-                new ResourceAmount{ resourceType = goldResourceType, amount = repairCost }
+                new ResourceAmount {resourceType = goldResouceType, amount = repairCost }
             };
 
-            if (ResourceManager.Instance.CanAfford(resourceAmountCost))
+            if(ResourceManager.Instance.CanAfford(resourceAmountCost))
             {
                 ResourceManager.Instance.SpendResources(resourceAmountCost);
                 healthSystem.HealFull();
             }
             else
             {
-                TooltipUI.Instance.Show("Cannot afford repair cost!");
+                TooltipUI.Instance.Show("돈이 부족하여 수리 하지 못하였습니다.", new TooltipUI.Timer { timer = 2f });
             }
+
+            healthSystem.HealFull();
         });
     }
-
 }

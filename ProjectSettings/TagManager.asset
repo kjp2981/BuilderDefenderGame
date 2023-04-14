@@ -11,7 +11,7 @@ TagManager:
   - 
   - Water
   - UI
-  - Minimap
+  - MiniMap
   - 
   - 
   - 
@@ -39,11 +39,11 @@ TagManager:
   - 
   m_SortingLayers:
   - name: Background
-    uniqueID: 2654371571
+    uniqueID: 3288452285
     locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
   - name: Top
-    uniqueID: 4046402749
+    uniqueID: 1906527873
     locked: 0

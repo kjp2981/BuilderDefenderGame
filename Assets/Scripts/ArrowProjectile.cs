@@ -1,6 +1,10 @@
+using Mono.Cecil;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ArrowProjectile : MonoBehaviour
 {
@@ -10,20 +14,20 @@ public class ArrowProjectile : MonoBehaviour
 
     public static ArrowProjectile Create(Vector3 position, Enemy enemy)
     {
-        Transform pfArrowProjectile = Resources.Load<Transform>("pfArrowProjectile");
-        Transform arrowTramsform = Instantiate(pfArrowProjectile, position, Quaternion.identity);
+        Transform pfArrowProjectile = GameAssets.Instance.pfArrowProjectile;
+        Transform arrowTransform = Instantiate(pfArrowProjectile, position, Quaternion.identity);
 
-        ArrowProjectile arrowProjectile = arrowTramsform.GetComponent<ArrowProjectile>();
-        arrowProjectile.SetTarget(enemy);
+        ArrowProjectile arrow = arrowTransform.GetComponent<ArrowProjectile>();
+        arrow.SetTarget(enemy);
 
-        return arrowProjectile;
+        return arrow;
     }
+
 
     private void Update()
     {
         Vector3 moveDir;
-
-        if(targetEnemy != null)
+        if (targetEnemy != null)
         {
             moveDir = (targetEnemy.transform.position - transform.position).normalized;
             lastMoveDir = moveDir;
@@ -32,14 +36,13 @@ public class ArrowProjectile : MonoBehaviour
         {
             moveDir = lastMoveDir;
         }
+        transform.eulerAngles = new Vector3(0f, 0f, UtilClass.GetAngleFromVector(moveDir));
 
         float moveSpeed = 20f;
         transform.position += moveDir * moveSpeed * Time.deltaTime;
 
-        transform.eulerAngles = new Vector3(0, 0, UtillClass.GetAngleFromVector(moveDir));
-
         timeToDie -= Time.deltaTime;
-        if(timeToDie < 0f)
+        if (timeToDie < 0f)
         {
             Destroy(gameObject);
         }
@@ -53,9 +56,10 @@ public class ArrowProjectile : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         Enemy enemy = collision.GetComponent<Enemy>();
-        if(enemy != null)
+
+        if(enemy !=null)
         {
-            int damageAmount = 20;
+            int damageAmount = 10;
             enemy.GetComponent<HealthSystem>().Damage(damageAmount);
 
             Destroy(gameObject);

@@ -9,23 +9,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2f92694d1a9f7e4f8ed01790cf33e30, type: 3}
+  m_Script: {fileID: 11500000, guid: a46d327314253e4409a89f6026aefc92, type: 3}
   m_Name: Tower
   m_EditorClassIdentifier: 
   nameString: Tower
-  prefab: {fileID: 3220052758798215576, guid: 59e7ab657192495459ae24d4a218d298, type: 3}
+  prefab: {fileID: 1408821615164462412, guid: cbef2f996308f6847b3786a571ed1fac, type: 3}
   hasResourceGeneratorData: 0
   resourceGeneratorData:
     timerMax: 0
     resourceType: {fileID: 0}
-    resourceDelecttionRadius: 0
+    resourceDetectionRadius: 0
     maxResourceAmount: 0
   sprite: {fileID: 21300000, guid: 3a549cd61f4d79e4b996c9978dac641f, type: 3}
   minConstructionRadius: 7
   constructionCostArray:
-  - resourceType: {fileID: 11400000, guid: 809264c6c05b82a42824cedf9ec82e94, type: 2}
+  - resourceType: {fileID: 11400000, guid: fa65348b49250d5429f697fb4ec06150, type: 2}
     amount: 40
-  - resourceType: {fileID: 11400000, guid: ad5ed2ca26687ef47a8b03c9e5cf49c2, type: 2}
+  - resourceType: {fileID: 11400000, guid: 84bfc8e2df0da2840be05ab5a0b862d2, type: 2}
     amount: 30
-  healthAmountMax: 70
+  healthAmountMax: 0
   constructionTimerMax: 5

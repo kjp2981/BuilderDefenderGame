@@ -6,17 +6,17 @@ using TMPro;
 public class TooltipUI : MonoBehaviour
 {
     public static TooltipUI Instance { get; private set; }
-
-    [SerializeField]
-    private RectTransform canvasRectTramsform;
+    
+    [SerializeField] private RectTransform canvasRectTransform;
     private RectTransform backgroundRectTransform;
     private TextMeshProUGUI textMeshPro;
     private RectTransform rectTransform;
+    private Timer timer;
+
 
     private void Awake()
     {
         Instance = this;
-
         backgroundRectTransform = transform.Find("background").GetComponent<RectTransform>();
         textMeshPro = transform.Find("text").GetComponent<TextMeshProUGUI>();
         rectTransform = GetComponent<RectTransform>();
@@ -24,18 +24,42 @@ public class TooltipUI : MonoBehaviour
         Hide();
     }
 
+    private void Update()
+    {
+        HandleFollowMouse();
+
+        if (timer != null)
+        {
+            timer.timer -= Time.deltaTime;
+            if (timer.timer < 0)
+            {
+                Hide();
+            }
+        }
+    }
+
+    private void setText(string tooltipText)
+    {
+        textMeshPro.SetText(tooltipText);
+        textMeshPro.ForceMeshUpdate();
+
+        Vector2 textSize = textMeshPro.GetRenderedValues(false);
+        Vector2 padding = new Vector2(16, 16);
+        backgroundRectTransform.sizeDelta = textSize+ padding;
+    }
+
     private void HandleFollowMouse()
     {
-        Vector2 anchoredPosition = Input.mousePosition / canvasRectTramsform.localScale.x;
+        Vector2 anchoredPosition = Input.mousePosition / canvasRectTransform.localScale.x;
 
-        if (anchoredPosition.x + backgroundRectTransform.rect.width > canvasRectTramsform.rect.width)
+        if (anchoredPosition.x + backgroundRectTransform.rect.width > canvasRectTransform.rect.width)
         {
-            anchoredPosition.x = canvasRectTramsform.rect.width - backgroundRectTransform.rect.width;
+            anchoredPosition.x = canvasRectTransform.rect.width - backgroundRectTransform.rect.width;
         }
 
-        if (anchoredPosition.y + backgroundRectTransform.rect.height > canvasRectTramsform.rect.height)
+        if (anchoredPosition.y + backgroundRectTransform.rect.height > canvasRectTransform.rect.height)
         {
-            anchoredPosition.y = canvasRectTramsform.rect.height - backgroundRectTransform.rect.height;
+            anchoredPosition.y = canvasRectTransform.rect.height - backgroundRectTransform.rect.height;
         }
 
         if (anchoredPosition.x < 0)
@@ -47,26 +71,15 @@ public class TooltipUI : MonoBehaviour
         {
             anchoredPosition.y = 0;
         }
-
         rectTransform.anchoredPosition = anchoredPosition;
     }
 
-    private void SetText(string tooltipText)
+    public void Show(string tooltipText, Timer timer=null)
     {
-        textMeshPro.SetText(tooltipText);
-        textMeshPro.ForceMeshUpdate();
-
-        Vector2 textSize = textMeshPro.GetRenderedValues(false);
-        Vector2 padding = new Vector2(16, 16);
-        backgroundRectTransform.sizeDelta = textSize + padding;
-    }
-
-    public void Show(string tooltipText)
-    {
+        this.timer = timer;
         gameObject.SetActive(true);
-        SetText(tooltipText);
+        setText(tooltipText);
         HandleFollowMouse();
-        StartCoroutine(HideCoroutine());
     }
 
     public void Hide()
@@ -74,9 +87,8 @@ public class TooltipUI : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private IEnumerator HideCoroutine()
+    public class Timer
     {
-        yield return new WaitForSeconds(2f);
-        Hide();
+        public float timer;
     }
 }

@@ -1,34 +1,32 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System;
+using Unity.VisualScripting;
 
 public class BuildingManager : MonoBehaviour
 {
     public static BuildingManager Instance { get; private set; }
-
-    public event EventHandler<onActiveBuildingTypeEventArgs> onActivelBuildingTypeChanged;
+    public event EventHandler<onActiveBuildingTypeEventArgs> onActiveBuildingTypeChanged;
 
     public class onActiveBuildingTypeEventArgs : EventArgs
     {
-        public BuildingTypeSO activeBuildingType;
+        public BuildingTypeSO buildingType;
     }
 
-    [SerializeField]
-    private Building hqBuilding;
+
+    [SerializeField] private Building hqBuilding;
     private BuildingTypeListSO buildingTypeList;
     private BuildingTypeSO activeBuildingType;
-
     private Camera mainCamera;
-
     private void Awake()
     {
         Instance = this;
-
         buildingTypeList = Resources.Load<BuildingTypeListSO>(typeof(BuildingTypeListSO).Name);
-    }
+        
 
+    }
     private void Start()
     {
         mainCamera = Camera.main;
@@ -46,34 +44,36 @@ public class BuildingManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
-            if (activeBuildingType != null)
-            {
-                if (CanSpawnBuilding(activeBuildingType, UtillClass.GetMouseWorldPosition(), out string errorMessage))
+            if (activeBuildingType != null){
+                if(CanSpawnBuilding(activeBuildingType, UtilClass.GetMouseWorldPosition(),out string errorMessage))
                 {
                     if (ResourceManager.Instance.CanAfford(activeBuildingType.constructionCostArray))
                     {
                         ResourceManager.Instance.SpendResources(activeBuildingType.constructionCostArray);
-                        //Instantiate(activeBuildingType.prefab, UtillClass.GetMouseWorldPosition(), Quaternion.identity);
-                        BuildingConstruction.Create(UtillClass.GetMouseWorldPosition(), activeBuildingType);
+                        // Instantiate(activeBuildingType.prefab, UtilClass.GetMouseWorldPosition(), Quaternion.identity);
+                        BuildingConstruction.Create(UtilClass.GetMouseWorldPosition(), activeBuildingType);
                         SoundManager.Instance.PlaySound(SoundManager.Sound.BuildingPlaced);
                     }
                     else
                     {
-                        TooltipUI.Instance.Show("자원 부족 : " + activeBuildingType.GetConstructionCost());
+                        TooltipUI.Instance.Show("자원부족 : " + activeBuildingType.GetConstructionCostString(), new TooltipUI.Timer { timer = 2f });
                     }
                 }
                 else
                 {
-                    TooltipUI.Instance.Show(errorMessage);
+                    TooltipUI.Instance.Show(errorMessage, new TooltipUI.Timer { timer = 2f });
                 }
             }
+          
         }
     }
+
+
 
     public void SetActiveBuildingType(BuildingTypeSO buildingType)
     {
         activeBuildingType = buildingType;
-        onActivelBuildingTypeChanged?.Invoke(this, new onActiveBuildingTypeEventArgs { activeBuildingType = activeBuildingType });
+        onActiveBuildingTypeChanged?.Invoke(this, new onActiveBuildingTypeEventArgs { buildingType = activeBuildingType });
     }
 
     public BuildingTypeSO GetActiveBuildingType()
@@ -85,9 +85,9 @@ public class BuildingManager : MonoBehaviour
     {
         BoxCollider2D boxCollider2D = buildingType.prefab.GetComponent<BoxCollider2D>();
 
-        Collider2D[] collider2DArray = Physics2D.OverlapBoxAll(position + (Vector3)boxCollider2D.offset, boxCollider2D.size, 0);
+        Collider2D[] collider2DArray=Physics2D.OverlapBoxAll(position+(Vector3)boxCollider2D.offset, boxCollider2D.size, 0f);
 
-        bool isAreaClear = collider2DArray.Length == 0;
+        bool isAreaClear= collider2DArray.Length == 0;
         if (!isAreaClear)
         {
             errorMessage = "건물을 놓을 수 없는 위치입니다.";
@@ -108,8 +108,20 @@ public class BuildingManager : MonoBehaviour
             }
         }
 
-        float maxCinstructionRadius = 25f;
-        collider2DArray = Physics2D.OverlapCircleAll(position, maxCinstructionRadius);
+        if(buildingType.hasResourceGeneratorData)
+        {
+            ResourceGeneratorData resourceGeneratorData = buildingType.resourceGeneratorData;
+            int nearbyResourceAmount = ResourceGenerator.GetNearbyResourceAmount(resourceGeneratorData, position);
+
+            if(nearbyResourceAmount == 0)
+            {
+                errorMessage = "리소스 노드 없ㅇ므'";
+                return false;
+            }
+        }
+        float maxConstructionRadius = 25;
+
+        collider2DArray = Physics2D.OverlapCircleAll(position, maxConstructionRadius);
         foreach (Collider2D collider2D in collider2DArray)
         {
             BuildingTypeHolder buildingTypeHolder = collider2D.GetComponent<BuildingTypeHolder>();
@@ -119,9 +131,9 @@ public class BuildingManager : MonoBehaviour
                 return true;
             }
         }
-
         errorMessage = "주변에 건물이 있어야 합니다.";
         return false;
+        
     }
 
     public Building GetHQBuilding()

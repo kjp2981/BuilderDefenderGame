@@ -37,7 +37,7 @@ public class CinemachineShake : MonoBehaviour
     public void ShakeCamera(float intensity, float timerMax)
     {
         this.timerMax = timerMax;
-        timer = 0;
+        timer = 0f;
         startingIntensity = intensity;
         cinemachineMultiChannelPerlin.m_AmplitudeGain = intensity;
     }

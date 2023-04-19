@@ -62,7 +62,6 @@ public class Building : MonoBehaviour
     private void OnMouseEnter()
     {
         ShowBuildingDemolishBtn();
-
     }
 
     private void OnMouseExit()

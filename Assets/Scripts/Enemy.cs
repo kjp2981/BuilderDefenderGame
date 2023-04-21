@@ -16,6 +16,7 @@ public class Enemy : MonoBehaviour
     private Rigidbody2D enemyRigidbody2D;
     private float lookForTimer;
     private float lookForTimerMax = .2f;
+    public float moveSpeed = 8f;
 
     private HealthSystem healthSystem;
 
@@ -69,7 +70,6 @@ public class Enemy : MonoBehaviour
         if (targetTransform != null)
         {
             Vector3 moveDir = (targetTransform.position - transform.position).normalized;
-            float moveSpeed = 8f;
             enemyRigidbody2D.velocity = moveDir * moveSpeed;
         }
         else

@@ -18,7 +18,8 @@ public class SkillManager : MonoBehaviour
     private void Start()
     {
         AddSkill(new ExplosionSkill());
-
+        AddSkill(new SlowSkill());
+        
         Init();
     }
 
@@ -34,7 +35,7 @@ public class SkillManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            StartCoroutine(_skillList[0].SkillActionCoroutine(UtilClass.GetMouseWorldPosition()));
+            StartCoroutine(_skillList[1].SkillActionCoroutine(UtilClass.GetMouseWorldPosition()));
         }
     }
 

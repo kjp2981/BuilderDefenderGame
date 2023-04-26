@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: SlowSkill
   m_EditorClassIdentifier: 
   SkillName: Slow
-  Range: 2
+  Range: 10
+  RangeOffset: 0.25
   Delay: 0
   Duration: 3
+  Sprite: {fileID: 0}
   EffectPrefab: {fileID: 7226888052703040409, guid: 7ec363c8df426644ea85f8d6d570561c, type: 3}
   CostArray: []

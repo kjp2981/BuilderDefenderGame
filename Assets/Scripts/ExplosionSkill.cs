@@ -17,6 +17,7 @@ public class ExplosionSkill : BaseSkill
 
             GameObject effect = GameObject.Instantiate(_skillSO.EffectPrefab);
             effect.transform.position = pos;
+            effect.transform.localScale = Vector3.one * _skillSO.Range * _skillSO.RangeOffset * 2;
             effect.transform.rotation = Quaternion.identity;
 
             yield return new WaitForSeconds(_skillSO.Delay);

@@ -115,7 +115,7 @@ public class BuildingManager : MonoBehaviour
 
             if(nearbyResourceAmount == 0)
             {
-                errorMessage = "리소스 노드 없ㅇ므'";
+                errorMessage = "리소스 노드 없음'";
                 return false;
             }
         }

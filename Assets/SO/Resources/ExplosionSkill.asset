@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: ExplosionSkill
   m_EditorClassIdentifier: 
   SkillName: Explosion
-  Range: 3
+  Range: 6
+  RangeOffset: 0.125
   Delay: 0
   Duration: 0
+  Sprite: {fileID: 0}
   EffectPrefab: {fileID: 2433282508537954060, guid: 3ef3ae421f71c5c4e97fe12dc2fc6312, type: 3}
   CostArray: []

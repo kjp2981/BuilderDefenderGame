@@ -13,6 +13,7 @@ public class SlowSkill : BaseSkill
     {
         GameObject effect = GameObject.Instantiate(_skillSO.EffectPrefab);
         effect.transform.position = pos;
+        effect.transform.localScale = Vector3.one * _skillSO.Range * _skillSO.RangeOffset * 2;
         effect.transform.rotation = Quaternion.identity;
 
         Collider2D[] col = Physics2D.OverlapCircleAll(effect.transform.position, _skillSO.Range);
@@ -30,11 +31,14 @@ public class SlowSkill : BaseSkill
 
         foreach (Collider2D collider in col)
         {
-            Enemy enemy = collider.GetComponent<Enemy>();
-
-            if (enemy != null)
+            if (collider != null)
             {
-                enemy.moveSpeed *= 2;
+                Enemy enemy = collider.GetComponent<Enemy>();
+
+                if (enemy != null)
+                {
+                    enemy.moveSpeed *= 2;
+                }
             }
         }
     }

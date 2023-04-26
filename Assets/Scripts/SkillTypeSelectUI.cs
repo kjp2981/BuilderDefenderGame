@@ -1,21 +1,22 @@
-          using System.Collections;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
-public class BuildingTypeSelectUI : MonoBehaviour
+
+public class SkillTypeSelectUI : MonoBehaviour
 {
     [SerializeField] private Sprite sprite;
-    [SerializeField] private List<BuildingTypeSO> ignoreBuildingTypeList;
 
-    private BuildingTypeListSO buildingTypeList;
-    private Dictionary<BuildingTypeSO, Transform> btnTransformDic;
+    private BaseSkill[] skillList;
+    private Dictionary<BaseSkill, Transform> btnTransformDic;
     Transform arrowBtn;
 
-    private void Awake()
+    private void Start()
     {
-        buildingTypeList = Resources.Load<BuildingTypeListSO>(typeof(BuildingTypeListSO).Name);
-        btnTransformDic = new Dictionary<BuildingTypeSO, Transform>();
+        skillList = SkillManager.Instance.GetSkillList();
+        btnTransformDic = new Dictionary<BaseSkill, Transform>();
+
 
         Transform btnTemplate = transform.Find("btnTemplate");
         btnTemplate.gameObject.SetActive(false);
@@ -32,7 +33,7 @@ public class BuildingTypeSelectUI : MonoBehaviour
         arrowBtn.Find("image").GetComponent<RectTransform>().sizeDelta = new Vector2(0, -30);
 
         arrowBtn.GetComponent<Button>().onClick.AddListener(() => {
-            BuildingManager.Instance.SetActiveBuildingType(null);
+            SkillManager.Instance.SetSelectSkill(null);
             SelectUI.Instance.NextSelectUI();
         });
 
@@ -50,25 +51,24 @@ public class BuildingTypeSelectUI : MonoBehaviour
 
         index++;
 
-        foreach (BuildingTypeSO buildingType in buildingTypeList.list)
+        foreach (BaseSkill skill in skillList)
         {
-            if(ignoreBuildingTypeList.Contains(buildingType)) { continue; }
             Transform btnTransform = Instantiate(btnTemplate, transform);
             btnTransform.gameObject.SetActive(true);
 
             btnTransform.GetComponent<RectTransform>().anchoredPosition = new Vector2(offsetAmount * index, 0);
 
-            btnTransform.Find("image").GetComponent<Image>().sprite = buildingType.sprite;
-            
+            btnTransform.Find("image").GetComponent<Image>().sprite = skill.SkillSO.Sprite;
 
-            btnTransform.GetComponent<Button>().onClick.AddListener(()=> {
-                BuildingManager.Instance.SetActiveBuildingType(buildingType);
+
+            btnTransform.GetComponent<Button>().onClick.AddListener(() => {
+                SkillManager.Instance.SetSelectSkill(skill);
             });
 
             mouseEnterExitEvents = btnTransform.GetComponent<MouseEnterExitEvents>();
             mouseEnterExitEvents.OnMouseEnter += (object sender, EventArgs e) =>
             {
-                TooltipUI.Instance.Show(buildingType.nameString+"\n"+buildingType.GetConstructionCostString());
+                TooltipUI.Instance.Show(skill.SkillSO.SkillName + "\n" + skill.SkillSO.GetConstructionCostString());
             };
 
             mouseEnterExitEvents.OnMouseExit += (object sender, EventArgs e) =>
@@ -77,33 +77,31 @@ public class BuildingTypeSelectUI : MonoBehaviour
             };
 
 
-            btnTransformDic[buildingType] = btnTransform;
+            btnTransformDic[skill] = btnTransform;
             index++;
         }
+
+        UpdateSelectSkillBtn();
+        //BuildingManager.Instance.onActiveBuildingTypeChanged += SkillManager_onActiveBuildingTypeChanged;
+        SkillManager.Instance.onSkillChanged += SkillManager_onSkillChanged;
     }
 
-    private void Start()
+    private void SkillManager_onSkillChanged(object sender, SkillManager.onSkillEventArgs e)
     {
-        UpdateActiveBuildingTypeBtn();
-        BuildingManager.Instance.onActiveBuildingTypeChanged += BuildingManager_onActiveBuildingTypeChanged;
+        UpdateSelectSkillBtn();
     }
 
-    private void BuildingManager_onActiveBuildingTypeChanged(object sender, BuildingManager.onActiveBuildingTypeEventArgs e)
-    {
-        UpdateActiveBuildingTypeBtn();
-    }
-
-    private void UpdateActiveBuildingTypeBtn()
+    private void UpdateSelectSkillBtn()
     {
         arrowBtn.Find("selected").gameObject.SetActive(false);
-        foreach (BuildingTypeSO buildingType in btnTransformDic.Keys)
+        foreach (BaseSkill skill in btnTransformDic.Keys)
         {
-            Transform btnTransform = btnTransformDic[buildingType];
+            Transform btnTransform = btnTransformDic[skill];
             btnTransform.Find("selected").gameObject.SetActive(false);
         }
 
-        BuildingTypeSO activeBuildingType = BuildingManager.Instance.GetActiveBuildingType();
-        
+        BaseSkill activeBuildingType = SkillManager.Instance.GetSelectSkill();
+
 
         if (activeBuildingType == null)
         {

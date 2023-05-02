@@ -23,7 +23,7 @@ public class Enemy : MonoBehaviour
     private HealthSystem healthSystem;
 
 
-    private void Awake()
+    protected virtual void Awake()
     {
         enemyRigidbody2D = GetComponent<Rigidbody2D>();
         healthSystem = GetComponent<HealthSystem>();
@@ -40,7 +40,7 @@ public class Enemy : MonoBehaviour
 
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         if (BuildingManager.Instance.GetHQBuilding() != null)
         {
@@ -61,7 +61,7 @@ public class Enemy : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         HandleMovement();
         HandleTargetting();
@@ -69,6 +69,8 @@ public class Enemy : MonoBehaviour
 
     private void HandleMovement()
     {
+        if (enemyRigidbody2D == null) return;
+
         if (targetTransform != null)
         {
             Vector3 moveDir = (targetTransform.position - transform.position).normalized;

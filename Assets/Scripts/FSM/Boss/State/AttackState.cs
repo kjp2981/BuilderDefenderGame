@@ -28,9 +28,13 @@ public class AttackState : AIState
     {
         timer += Time.deltaTime;
 
-        if(timer >= 1f)
+        if(timer >= .2f)
         {
-            ArrowProjectile.Create(this.transform.position, _enemy.TargetTransform);
+            Vector3 pos = _aiBrain.Target.transform.position - this.transform.position;
+            pos.Normalize();
+            pos *= 4f;
+            pos.z = 0;
+            ArrowProjectile.Create(this.transform.position + pos, _enemy.TargetTransform);
             timer = 0f;
         }
     }

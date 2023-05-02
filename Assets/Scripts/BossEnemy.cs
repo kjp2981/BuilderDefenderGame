@@ -14,10 +14,31 @@ public class BossEnemy : Enemy
 
     private AIBrain aiBrain;
 
-    void Start()
+    protected override void Awake()
     {
+        base.Awake();
         targetMaxRadius = 60f;
         aiBrain = GetComponentInChildren<AIBrain>();
-        aiBrain.SetTarget(TargetTransform.gameObject);
+        if(TargetTransform == null)
+        {
+            aiBrain.SetTarget(null);
+        }
+        else
+        {
+            aiBrain.SetTarget(TargetTransform.gameObject);
+        }
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        if (TargetTransform == null)
+        {
+            aiBrain.SetTarget(BuildingManager.Instance.GetHQBuilding().gameObject);
+        }
+        else
+        {
+            aiBrain.SetTarget(TargetTransform.gameObject);
+        }
     }
 }

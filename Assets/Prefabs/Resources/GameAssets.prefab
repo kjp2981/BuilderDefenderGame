@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pfEnemy: {fileID: 3550274769782439236, guid: 7d3b069c6b8bd644fb0cea987c406026, type: 3}
+  pfBossEnemy: {fileID: 7035832318060590807, guid: 6e89b56e1a0abfe45b7970a3fb2a741d, type: 3}
   pfEnemyDieParticles: {fileID: 4850068476918138423, guid: fa53ff3e077270e4d8a679c8fa7de07f, type: 3}
   pfArrowProjectile: {fileID: 290329325029561900, guid: 63896dd5c522c884ca9f7013a8cebce5, type: 3}
   pfBuildingDestroyParticlse: {fileID: 222898084527167713, guid: 5731055b57af76744aa0f260d9e0e788, type: 3}

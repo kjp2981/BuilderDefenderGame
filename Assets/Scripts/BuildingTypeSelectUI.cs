@@ -39,7 +39,7 @@ public class BuildingTypeSelectUI : MonoBehaviour
         MouseEnterExitEvents mouseEnterExitEvents = arrowBtn.GetComponent<MouseEnterExitEvents>();
         mouseEnterExitEvents.OnMouseEnter += (object sender, EventArgs e) =>
         {
-            TooltipUI.Instance.Show("Arrow Button");
+            TooltipUI.Instance.Show("Change Skill");
         };
 
         mouseEnterExitEvents.OnMouseExit += (object sender, EventArgs e) =>

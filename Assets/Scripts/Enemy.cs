@@ -13,10 +13,12 @@ public class Enemy : MonoBehaviour
     }
 
     private Transform targetTransform;
+    public Transform TargetTransform => targetTransform;
     private Rigidbody2D enemyRigidbody2D;
     private float lookForTimer;
     private float lookForTimerMax = .2f;
     public float moveSpeed = 8f;
+    protected float targetMaxRadius = 30f;
 
     private HealthSystem healthSystem;
 
@@ -100,7 +102,7 @@ public class Enemy : MonoBehaviour
 
     private void LookForTarget()
     {
-        float targetMaxRadius = 30f;
+        
         Collider2D[] collider2DArray = Physics2D.OverlapCircleAll(transform.position, targetMaxRadius);
 
         foreach (Collider2D collider2D in collider2DArray)

@@ -8,11 +8,13 @@ using UnityEngine.EventSystems;
 
 public class ArrowProjectile : MonoBehaviour
 {
-    private Enemy targetEnemy;
+    //private Enemy targetEnemy;
+    private Transform targetEnemy;
     private Vector3 lastMoveDir;
     private float timeToDie = 2f;
+    public int damageAmount = 10;
 
-    public static ArrowProjectile Create(Vector3 position, Enemy enemy)
+    public static ArrowProjectile Create(Vector3 position, Transform enemy)
     {
         Transform pfArrowProjectile = GameAssets.Instance.pfArrowProjectile;
         Transform arrowTransform = Instantiate(pfArrowProjectile, position, Quaternion.identity);
@@ -29,7 +31,7 @@ public class ArrowProjectile : MonoBehaviour
         Vector3 moveDir;
         if (targetEnemy != null)
         {
-            moveDir = (targetEnemy.transform.position - transform.position).normalized;
+            moveDir = (targetEnemy.position - transform.position).normalized;
             lastMoveDir = moveDir;
         }
         else
@@ -48,19 +50,19 @@ public class ArrowProjectile : MonoBehaviour
         }
     }
 
-    private void SetTarget(Enemy targetEnemy)
+    private void SetTarget(Transform targetEnemy)
     {
         this.targetEnemy = targetEnemy;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Enemy enemy = collision.GetComponent<Enemy>();
+        //Enemy enemy = collision.GetComponent<Enemy>();
+        HealthSystem hs = collision.GetComponent<HealthSystem>();
 
-        if(enemy !=null)
+        if(hs != null)
         {
-            int damageAmount = 10;
-            enemy.GetComponent<HealthSystem>().Damage(damageAmount);
+            hs.Damage(damageAmount);
 
             Destroy(gameObject);
         }

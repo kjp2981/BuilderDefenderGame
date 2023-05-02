@@ -70,7 +70,12 @@ public class Tower : MonoBehaviour
 
             if (targetEnemy != null)
             {
-                ArrowProjectile.Create(projectileSpawnPosition, targetEnemy);
+                Vector3 pos = targetEnemy.transform.position - this.transform.position;
+                pos.Normalize();
+                pos *= 5f;
+                pos.z = 0;
+                //ArrowProjectile.Create(projectileSpawnPosition, targetEnemy.transform);
+                ArrowProjectile.Create(this.transform.position + pos, targetEnemy.transform);
             }
         }
     }

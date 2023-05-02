@@ -9,6 +9,7 @@ public abstract class AICondition : MonoBehaviour
     protected virtual void Awake()
     {
         _aiBrain = GetComponentInParent<AIBrain>();
+
     }
 
     public abstract bool IfCondition(AIState currentState, AIState nextState);

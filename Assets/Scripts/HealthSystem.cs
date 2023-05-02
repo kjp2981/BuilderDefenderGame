@@ -13,6 +13,7 @@ public class HealthSystem : MonoBehaviour
 
     [SerializeField] private int healthAmountMax;
     private int healthAmount;
+    public int Health => healthAmount;
 
     private void Awake()
     {

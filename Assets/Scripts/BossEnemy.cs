@@ -17,7 +17,6 @@ public class BossEnemy : Enemy
     protected override void Awake()
     {
         base.Awake();
-        targetMaxRadius = 60f;
         aiBrain = GetComponentInChildren<AIBrain>();
         if(TargetTransform == null)
         {
@@ -34,7 +33,10 @@ public class BossEnemy : Enemy
         base.Update();
         if (TargetTransform == null)
         {
-            aiBrain.SetTarget(BuildingManager.Instance.GetHQBuilding().gameObject);
+            if (BuildingManager.Instance.GetHQBuilding() != null)
+                aiBrain.SetTarget(BuildingManager.Instance.GetHQBuilding().gameObject);
+            else
+                aiBrain.SetTarget(null);
         }
         else
         {

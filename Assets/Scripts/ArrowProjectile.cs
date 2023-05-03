@@ -14,17 +14,24 @@ public class ArrowProjectile : MonoBehaviour
     private float timeToDie = 2f;
     public int damageAmount = 10;
 
-    public static ArrowProjectile Create(Vector3 position, Transform enemy)
+    private string tag;
+
+    public static ArrowProjectile Create(Vector3 position, Transform enemy, string tag)
     {
         Transform pfArrowProjectile = GameAssets.Instance.pfArrowProjectile;
         Transform arrowTransform = Instantiate(pfArrowProjectile, position, Quaternion.identity);
 
         ArrowProjectile arrow = arrowTransform.GetComponent<ArrowProjectile>();
         arrow.SetTarget(enemy);
+        arrow.SetTag(tag);
 
         return arrow;
     }
 
+    private void Start()
+    {
+        timeToDie = 5f;
+    }
 
     private void Update()
     {
@@ -55,12 +62,17 @@ public class ArrowProjectile : MonoBehaviour
         this.targetEnemy = targetEnemy;
     }
 
+    private void SetTag(string tag)
+    {
+        this.tag = tag;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         //Enemy enemy = collision.GetComponent<Enemy>();
         HealthSystem hs = collision.GetComponent<HealthSystem>();
 
-        if(hs != null)
+        if(hs != null && collision.CompareTag(tag) == true)
         {
             hs.Damage(damageAmount);
 

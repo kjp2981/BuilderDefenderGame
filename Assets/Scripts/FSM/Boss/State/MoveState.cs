@@ -18,7 +18,7 @@ public class MoveState : AIState
         {
             _enemy = GetComponentInParent<BossEnemy>();
         }
-        _enemy.moveSpeed = 5f;
+        _enemy.moveSpeed = 15f;
     }
 
     public override void TakeAAction()

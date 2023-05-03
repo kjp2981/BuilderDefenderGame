@@ -11,28 +11,23 @@ public class ExplosionSkill : BaseSkill
 
     public override IEnumerator SkillActionCoroutine(Vector2 pos)
     {
-        if (ResourceManager.Instance.CanAfford(_skillSO.CostArray))
+        GameObject effect = GameObject.Instantiate(_skillSO.EffectPrefab);
+        effect.transform.position = pos;
+        effect.transform.localScale = Vector3.one * _skillSO.Range * _skillSO.RangeOffset * 2;
+        effect.transform.rotation = Quaternion.identity;
+
+        yield return new WaitForSeconds(_skillSO.Delay);
+
+        Collider2D[] col = Physics2D.OverlapCircleAll(effect.transform.position, _skillSO.Range);
+        foreach (Collider2D collider in col)
         {
-            ResourceManager.Instance.SpendResources(_skillSO.CostArray);
+            Enemy enemy = collider.GetComponent<Enemy>();
 
-            GameObject effect = GameObject.Instantiate(_skillSO.EffectPrefab);
-            effect.transform.position = pos;
-            effect.transform.localScale = Vector3.one * _skillSO.Range * _skillSO.RangeOffset * 2;
-            effect.transform.rotation = Quaternion.identity;
-
-            yield return new WaitForSeconds(_skillSO.Delay);
-
-            Collider2D[] col = Physics2D.OverlapCircleAll(effect.transform.position, _skillSO.Range);
-            foreach (Collider2D collider in col)
+            if (enemy != null)
             {
-                Enemy enemy = collider.GetComponent<Enemy>();
+                int damageAmount = 9999;
+                enemy.GetComponent<HealthSystem>().Damage(damageAmount);
 
-                if (enemy != null)
-                {
-                    int damageAmount = 9999;
-                    enemy.GetComponent<HealthSystem>().Damage(damageAmount);
-
-                }
             }
         }
     }

@@ -19,4 +19,8 @@ MonoBehaviour:
   Duration: 3
   Sprite: {fileID: 21300000, guid: 20e905c3510afc246b3afe51627ac94f, type: 3}
   EffectPrefab: {fileID: 7226888052703040409, guid: 7ec363c8df426644ea85f8d6d570561c, type: 3}
-  CostArray: []
+  CostArray:
+  - resourceType: {fileID: 11400000, guid: 43e1deca213b76c44a1b6c8c92c74281, type: 2}
+    amount: 10
+  - resourceType: {fileID: 11400000, guid: 84bfc8e2df0da2840be05ab5a0b862d2, type: 2}
+    amount: 20

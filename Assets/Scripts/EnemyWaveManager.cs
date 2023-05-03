@@ -85,7 +85,7 @@ public class EnemyWaveManager : MonoBehaviour
 
                         if (remainingEnemySpawnAmount <= 0)
                         {
-                            if(waveNum % 1 == 0)
+                            if(waveNum % 10 == 0)
                             {
                                 BossEnemy.Create(spawnPos += UtilClass.GetRandomDir() * Random.Range(0f, 10f));
                             }

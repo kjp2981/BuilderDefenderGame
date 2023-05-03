@@ -30,7 +30,7 @@ public class SkillGhost : MonoBehaviour
         }
         else
         {
-            Show(e.skill.SkillSO.Sprite);
+            Show(e.skill);
         }
     }
 
@@ -39,10 +39,11 @@ public class SkillGhost : MonoBehaviour
         spriteGameObject.SetActive(false);
     }
 
-    private void Show(Sprite ghostSprite)
+    private void Show(BaseSkill skill)
     {
         spriteGameObject.SetActive(true);
-        spriteGameObject.GetComponent<SpriteRenderer>().sprite = ghostSprite;
+        spriteGameObject.transform.localScale = Vector3.one * skill.SkillSO.Range * 2;
+        //spriteGameObject.GetComponent<SpriteRenderer>().sprite = ghostSprite;
     }
 
 }
